@@ -46,6 +46,19 @@ const getDbCollection = ({ name, definition, helpers, instance, options }) => {
   return dbCollection;
 };
 
+/**
+ *
+ * @param definition
+ * @param nameParam
+ * @param schemaParam
+ * @param collection
+ * @param helpers
+ * @param apply
+ * @param composers
+ * @param instance
+ * @param options
+ * @return {Mongo.Collection}
+ */
 export const createCollection = ({
   definition,
   name: nameParam,
@@ -65,11 +78,14 @@ export const createCollection = ({
       console.log(`${PACKAGE_NAME} ${name} settings`, settings);
     }
 
+    // KUBIXLAB: We need to be able to pass a collection name null
+/*
     if (!name && !instance) {
       throw new Error(
         "The option 'name' is required, unless you are using the option 'instance' that is not your case :)."
       );
     }
+*/
     if (Meteor.isClient && isServerOnly) {
       throw new Error(
         'Collections are not allowed in the client, you can disable this changing the setting `isServerOnly`'
@@ -87,8 +103,7 @@ export const createCollection = ({
       apply(dbCollection);
     }
 
-    Object.assign(dbCollection, collection);
-    Object.assign(dbCollection, compose(...composers)(dbCollection));
+    Object.assign(dbCollection, compose(...composers)(collection));
     if (schema) {
       if (!dbCollection.attachSchema) {
         throw new Error(
